@@ -214,10 +214,11 @@ elif page == "Sector Analysis":
     with col2:
         st.subheader("Companies per Sector")
         sector_count = df.groupby('sector_name')['ticker'].nunique().reset_index()
+        sector_count.columns = ['sector_name', 'company_count']
         fig2 = px.pie(
             sector_count,
             names='sector_name',
-            values='ticker',
+            values='company_count',
             hole=0.4
         )
         st.plotly_chart(fig2, use_container_width=True)
