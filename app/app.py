@@ -28,7 +28,7 @@ st.set_page_config(
 )
 
 # ── Load Data ───────────────────────────────────────
-@st.cache_data
+@@st.cache_data
 def load_data():
     query = """
         SELECT 
@@ -38,10 +38,11 @@ def load_data():
         FROM stock_prices sp
         JOIN companies c ON sp.ticker = c.ticker
         JOIN sectors s ON c.sector_id = s.sector_id
-        ORDER BY sp.ticker, sp.date
+        ORDER BY sp.ticker, sp.date ASC
     """
     df = pd.read_sql(query, engine)
     df['date'] = pd.to_datetime(df['date'])
+    df = df.sort_values(['ticker', 'date']).reset_index(drop=True)
     return df
 
 df = load_data()
