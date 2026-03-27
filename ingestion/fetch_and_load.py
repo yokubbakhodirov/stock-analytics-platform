@@ -8,6 +8,13 @@ import os
 load_dotenv()
 DATABASE_URL = os.getenv("DATABASE_URL")
 
+if not DATABASE_URL:
+    raise ValueError(
+        "DATABASE_URL not found. "
+        "Create a .env file with your Supabase connection string. "
+        "See README.md for setup instructions."
+    )
+
 # Connect to Supabase
 engine = create_engine(DATABASE_URL)
 

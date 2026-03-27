@@ -8,7 +8,17 @@ import os
 
 # ── Setup ──────────────────────────────────────────
 load_dotenv()
-DATABASE_URL = os.getenv("DATABASE_URL")
+# Works locally (.env) and on Streamlit Cloud (secrets.toml)
+try:
+    DATABASE_URL = st.secrets["DATABASE_URL"]
+except:
+    DATABASE_URL = os.getenv("DATABASE_URL")
+
+if not DATABASE_URL:
+    st.error("DATABASE_URL not found. Check your .env or secrets.toml file.")
+    st.stop()
+
+DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 engine = create_engine(DATABASE_URL)
 
 st.set_page_config(
