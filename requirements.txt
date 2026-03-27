@@ -1,9 +1,8 @@
-yfinance==0.2.54
-pandas==2.2.2
-sqlalchemy==2.0.30
-psycopg2-binary==2.9.9
-streamlit==1.32.0
-plotly==5.22.0
-python-dotenv==1.0.1
+yfinance
+pandas
+sqlalchemy
+psycopg2-binary
+streamlit
+plotly
+python-dotenv
 altair==4.2.2
-pillow==10.3.0
