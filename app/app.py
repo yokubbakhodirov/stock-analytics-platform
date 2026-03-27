@@ -8,7 +8,6 @@ import os
 
 # ── Setup ──────────────────────────────────────────
 load_dotenv()
-# Works locally (.env) and on Streamlit Cloud (secrets.toml)
 try:
     DATABASE_URL = st.secrets["DATABASE_URL"]
 except:
@@ -53,14 +52,10 @@ def load_data():
     df['high'] = pd.to_numeric(df['high'])
     df['low'] = pd.to_numeric(df['low'])
     df['volume'] = pd.to_numeric(df['volume'])
+    df = df.sort_values(['ticker', 'date']).reset_index(drop=True)
     return df
 
 df = load_data()
-
-# TEMPORARY DEBUG - remove after fixing
-st.write("Data types:", df.dtypes)
-st.write("First 3 rows:", df.head(3))
-st.write("Close value sample:", df['close'].iloc[0])
 
 # ── Sidebar ─────────────────────────────────────────
 st.sidebar.title("📈 Stock Analytics")
@@ -87,13 +82,23 @@ if page == "Executive Summary":
 
     st.markdown("---")
 
-    # Stock price history
+    # Stock price history — plot each ticker separately
     st.subheader("Stock Price History")
-    fig = px.line(
-        df, x='date', y='close',
-        color='ticker',
+    fig = go.Figure()
+    for t in sorted(df['ticker'].unique()):
+        t_df = df[df['ticker'] == t].sort_values('date')
+        fig.add_trace(go.Scatter(
+            x=t_df['date'].tolist(),
+            y=t_df['close'].tolist(),
+            name=t,
+            mode='lines',
+            line=dict(width=1.5)
+        ))
+    fig.update_layout(
         title='Closing Price — All Stocks',
-        labels={'close': 'Close Price (USD)', 'date': 'Date'}
+        xaxis_title='Date',
+        yaxis_title='Close Price (USD)',
+        hovermode='x unified'
     )
     st.plotly_chart(fig, use_container_width=True)
 
@@ -116,7 +121,7 @@ elif page == "Stock Analysis":
 
     ticker = st.selectbox("Select a stock", sorted(df['ticker'].unique()))
     stock = df[df['ticker'] == ticker].copy()
-    stock = stock.sort_values('date')
+    stock = stock.sort_values('date').reset_index(drop=True)
 
     # MA30
     stock['ma_30'] = stock['close'].rolling(30).mean()
@@ -138,24 +143,32 @@ elif page == "Stock Analysis":
     st.subheader(f"{ticker} — Price vs 30-Day Moving Average")
     fig = go.Figure()
     fig.add_trace(go.Scatter(
-        x=stock['date'], y=stock['close'],
-        name='Close Price', line=dict(width=1.5)
+        x=stock['date'].tolist(),
+        y=stock['close'].tolist(),
+        name='Close Price',
+        mode='lines',
+        line=dict(width=1.5)
     ))
     fig.add_trace(go.Scatter(
-        x=stock['date'], y=stock['ma_30'],
-        name='MA30', line=dict(width=1.5, dash='dash')
+        x=stock['date'].tolist(),
+        y=stock['ma_30'].tolist(),
+        name='MA30',
+        mode='lines',
+        line=dict(width=1.5, dash='dash')
     ))
     fig.update_layout(xaxis_title='Date', yaxis_title='Price (USD)')
     st.plotly_chart(fig, use_container_width=True)
 
     # Volume
     st.subheader(f"{ticker} — Daily Trading Volume")
-    fig2 = px.bar(
-        stock, x='date', y='volume',
-        color='volume',
-        color_continuous_scale='Blues',
-        labels={'volume': 'Volume', 'date': 'Date'}
-    )
+    fig2 = go.Figure()
+    fig2.add_trace(go.Bar(
+        x=stock['date'].tolist(),
+        y=stock['volume'].tolist(),
+        name='Volume',
+        marker_color='steelblue'
+    ))
+    fig2.update_layout(xaxis_title='Date', yaxis_title='Volume')
     st.plotly_chart(fig2, use_container_width=True)
 
 # ════════════════════════════════════════════════════
@@ -165,11 +178,16 @@ elif page == "Sector Analysis":
     st.title("🏭 Sector Analysis")
 
     # Yearly return per ticker
-    returns = df.groupby(['ticker', 'sector_name']).apply(
-        lambda x: pd.Series({
-            'yearly_return': ((x.iloc[-1]['close'] - x.iloc[0]['close']) / x.iloc[0]['close']) * 100
-        })
-    ).reset_index()
+    records = []
+    for t in df['ticker'].unique():
+        t_df = df[df['ticker'] == t].sort_values('date')
+        first_close = t_df.iloc[0]['close']
+        last_close = t_df.iloc[-1]['close']
+        sector = t_df.iloc[0]['sector_name']
+        yearly_return = ((last_close - first_close) / first_close) * 100
+        records.append({'ticker': t, 'sector_name': sector, 'yearly_return': yearly_return})
+
+    returns = pd.DataFrame(records)
 
     # Avg return per sector
     sector_returns = returns.groupby('sector_name')['yearly_return'].mean().reset_index()
