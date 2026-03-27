@@ -28,7 +28,7 @@ st.set_page_config(
 )
 
 # ── Load Data ───────────────────────────────────────
-@@st.cache_data
+@st.cache_data
 def load_data():
     query = """
         SELECT 
