@@ -198,14 +198,17 @@ elif page == "Sector Analysis":
 
     with col1:
         st.subheader("Average Yearly Return by Sector")
-        fig = px.bar(
-            sector_returns,
-            x='avg_return', y='sector_name',
+        fig = go.Figure(go.Bar(
+            x=sector_returns['avg_return'].tolist(),
+            y=sector_returns['sector_name'].tolist(),
             orientation='h',
-            color='avg_return',
-            color_continuous_scale='RdYlGn',
-            labels={'avg_return': 'Avg Return (%)', 'sector_name': 'Sector'}
-        )
+            marker=dict(
+                color=sector_returns['avg_return'].tolist(),
+                colorscale='RdYlGn',
+                showscale=True
+            )
+        ))
+        fig.update_layout(xaxis_title='Avg Return (%)', yaxis_title='Sector')
         st.plotly_chart(fig, use_container_width=True)
 
     with col2:
@@ -221,11 +224,10 @@ elif page == "Sector Analysis":
 
     st.subheader("Average Daily Volume by Sector")
     sector_vol = df.groupby('sector_name')['volume'].mean().reset_index()
-    fig3 = px.bar(
-        sector_vol,
-        x='sector_name', y='volume',
-        color='volume',
-        color_continuous_scale='Blues',
-        labels={'volume': 'Avg Daily Volume', 'sector_name': 'Sector'}
-    )
+    fig3 = go.Figure(go.Bar(
+        x=sector_vol['sector_name'].tolist(),
+        y=sector_vol['volume'].tolist(),
+        marker_color='steelblue'
+    ))
+    fig3.update_layout(xaxis_title='Sector', yaxis_title='Avg Daily Volume')
     st.plotly_chart(fig3, use_container_width=True)
