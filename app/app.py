@@ -218,13 +218,11 @@ elif page == "Sector Analysis":
             'company_count': [df[df['sector_name'] == s]['ticker'].nunique() 
                              for s in df['sector_name'].unique()]
         })
-        st.write(sector_count)  # temporary debug
-        fig2 = px.pie(
-            sector_count,
-            names='sector_name',
-            values='company_count',
+        fig2 = go.Figure(go.Pie(
+            labels=sector_count['sector_name'].tolist(),
+            values=sector_count['company_count'].tolist(),
             hole=0.4
-        )
+        ))
         st.plotly_chart(fig2, use_container_width=True)
 
     st.subheader("Average Daily Volume by Sector")
