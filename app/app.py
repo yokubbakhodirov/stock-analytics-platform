@@ -213,8 +213,12 @@ elif page == "Sector Analysis":
 
     with col2:
         st.subheader("Companies per Sector")
-        sector_count = df.groupby('sector_name')['ticker'].nunique().reset_index()
-        sector_count.columns = ['sector_name', 'company_count']
+        sector_count = pd.DataFrame({
+            'sector_name': df['sector_name'].unique(),
+            'company_count': [df[df['sector_name'] == s]['ticker'].nunique() 
+                             for s in df['sector_name'].unique()]
+        })
+        st.write(sector_count)  # temporary debug
         fig2 = px.pie(
             sector_count,
             names='sector_name',
