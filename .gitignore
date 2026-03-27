@@ -5,3 +5,4 @@ __pycache__/
 *.pbix
 stock_data.csv
 powerbi/
+.ipynb_checkpoints/
