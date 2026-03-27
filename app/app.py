@@ -57,6 +57,11 @@ def load_data():
 
 df = load_data()
 
+# TEMPORARY DEBUG - remove after fixing
+st.write("Data types:", df.dtypes)
+st.write("First 3 rows:", df.head(3))
+st.write("Close value sample:", df['close'].iloc[0])
+
 # ── Sidebar ─────────────────────────────────────────
 st.sidebar.title("📈 Stock Analytics")
 st.sidebar.markdown("---")
