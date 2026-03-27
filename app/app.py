@@ -32,9 +32,15 @@ st.set_page_config(
 def load_data():
     query = """
         SELECT 
-            sp.ticker, sp.date, sp.open, sp.close,
-            sp.high, sp.low, sp.volume,
-            c.company_name, s.sector_name
+            sp.ticker,
+            sp.date::text AS date,
+            sp.open::float AS open,
+            sp.close::float AS close,
+            sp.high::float AS high,
+            sp.low::float AS low,
+            sp.volume::bigint AS volume,
+            c.company_name,
+            s.sector_name
         FROM stock_prices sp
         JOIN companies c ON sp.ticker = c.ticker
         JOIN sectors s ON c.sector_id = s.sector_id
@@ -42,7 +48,11 @@ def load_data():
     """
     df = pd.read_sql(query, engine)
     df['date'] = pd.to_datetime(df['date'])
-    df = df.sort_values(['ticker', 'date']).reset_index(drop=True)
+    df['close'] = pd.to_numeric(df['close'])
+    df['open'] = pd.to_numeric(df['open'])
+    df['high'] = pd.to_numeric(df['high'])
+    df['low'] = pd.to_numeric(df['low'])
+    df['volume'] = pd.to_numeric(df['volume'])
     return df
 
 df = load_data()
