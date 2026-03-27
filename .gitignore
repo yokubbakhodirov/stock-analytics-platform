@@ -4,3 +4,4 @@ __pycache__/
 *.pyc
 *.pbix
 stock_data.csv
+powerbi/
