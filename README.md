@@ -99,7 +99,6 @@ stock_prices → id, ticker (FK → companies), date, open, close, high, low, vo
 
 ### Sector Analysis
 ![Sector Analysis](screenshots/sector_analysis.png)
-
 ---
 
 ## 📸 Power BI Dashboard
@@ -107,9 +106,11 @@ stock_prices → id, ticker (FK → companies), date, open, close, high, low, vo
 ### Executive Summary
 ![Power BI Page 1](screenshots/powerbi_page1.png)
 
-### Sector Analysis
-![Power BI Page 3](screenshots/powerbi_page2.png)
+### Stock Analysis
+![Power BI Page 2](screenshots/powerbi_page2.png)
 
+### Sector Analysis
+![Power BI Page 3](screenshots/powerbi_page3.png)
 ---
 
 ## ⚙️ Setup & Installation
@@ -143,4 +144,4 @@ streamlit run app/app.py
 ---
 
 ## 👤 Author
-Yokub Bakhodirov — [LinkedIn](https://linkedin.com/in/yourprofile) | [GitHub](https://github.com/yokubbakhodirov)
+Yokub Bakhodirov — [LinkedIn](https://www.linkedin.com/in/yokub-bakhodirov-599897230/) | [GitHub](https://github.com/yokubbakhodirov)
