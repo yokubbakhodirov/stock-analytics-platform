@@ -109,13 +109,14 @@ stock_prices → id, ticker (FK → companies), date, open, close, high, low, vo
 ### Executive Summary
 ![Power BI Page 1](screenshots/powerbi_page1.png)
 <br>
-
+---
 ### Stock Analysis
 ![Power BI Page 2](screenshots/powerbi_page2.png)
 <br>
-
+---
 ### Sector Analysis
 ![Power BI Page 3](screenshots/powerbi_page3.png)
+<br>
 ---
 <br>
 
